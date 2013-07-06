@@ -54,7 +54,8 @@
             s.albumArt.frame = CGRectMake(0, verticalOrigin, s.albumArt.frame.size.width, s.albumArt.frame.size.height);
             [scroll addSubview: s.albumArt];
             NSString *st = [NSString stringWithFormat: @"%@\n%@", s.artistName, s.songName];
-            NSString *spotifyQuery = [st stringByReplacingOccurrencesOfString: @" " withString: @"+"];
+            NSString *spotifyQuery = [st stringByReplacingOccurrencesOfString: @"&" withString: @""];
+            spotifyQuery = [spotifyQuery stringByReplacingOccurrencesOfString: @" " withString: @"+"];
             spotifyQuery = [spotifyQuery stringByReplacingOccurrencesOfString: @"\n" withString: @"+"];
             s.spotifyURL =  [[SpotifyInterface sharedInterface] getSpotifyURLForQuery: spotifyQuery];
 
