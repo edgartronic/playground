@@ -60,6 +60,14 @@
             lbl.text = st;
             [scroll addSubview: lbl];
             
+            CGRect r = CGRectMake(lbl.frame.size.width + lbl.frame.origin.x + 5, lbl.frame.origin.y, 65, lbl.frame.size.height);
+            
+            UIActivityIndicatorView *loader = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle: UIActivityIndicatorViewStyleGray];
+            loader.frame = r;
+            [scroll addSubview: loader];
+            loader.tag = 9999;
+            [loader startAnimating];
+            
             
             dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0ul);
             dispatch_async(queue, ^ {
@@ -70,9 +78,14 @@
                 s.spotifyURL =  [[SpotifyInterface sharedInterface] getSpotifyURLForQuery: spotifyQuery];
                 
                 dispatch_sync(dispatch_get_main_queue(), ^{
+                    
+                    UIActivityIndicatorView *loader = (UIActivityIndicatorView *)[scroll viewWithTag: 9999];
+                    [loader stopAnimating];
+                    [loader removeFromSuperview];
+                    
                     if (s.spotifyURL) {
                         UIButton *btn = [UIButton buttonWithType: UIButtonTypeSystem];
-                        btn.frame = CGRectMake(lbl.frame.size.width + lbl.frame.origin.x + 5, lbl.frame.origin.y, 65, lbl.frame.size.height);
+                        btn.frame = r;
                         btn.tag = tag;
                         [btn setTitle: @"Share" forState: UIControlStateNormal];
                         [btn addTarget: self action: @selector(shareSong:) forControlEvents: UIControlEventTouchUpInside];
