@@ -143,7 +143,7 @@
                     // Create a new 'Song' object for each item
                     Song *newSong = [Song new];
                     newSong.songName = [item valueForProperty: MPMediaItemPropertyTitle];
-                    newSong.artistName = [item valueForProperty: MPMediaItemPropertyArtist];
+                    newSong.artistName = [item valueForProperty: MPMediaItemPropertyAlbumArtist];
                     MPMediaItemArtwork *art = [item valueForProperty: MPMediaItemPropertyArtwork];
                     UIImage *artImg = [art imageWithSize: CGSizeMake(65.0, 65.0)];
                     newSong.albumArt = [[UIImageView alloc] initWithImage: artImg];
