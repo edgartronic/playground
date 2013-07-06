@@ -20,6 +20,8 @@
 
 @implementation MasterViewController
 
+@synthesize loader;
+
 - (void)awakeFromNib
 {
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
@@ -130,6 +132,12 @@
 
 - (void) grabTopRatedSongsFromLib {
     
+    loader = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle: UIActivityIndicatorViewStyleGray];
+    loader.frame = CGRectMake(0, 0, 150, 150);
+    loader.center = self.view.center;
+    [self.view addSubview: loader];
+    [loader startAnimating];
+    
     dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0ul);
     dispatch_async(queue, ^ {
         
@@ -156,6 +164,8 @@
             topSongsList.listName = @"My Top-Rated Songs";
             topSongsList.listDateCreated = [NSDate date];
             [self insertNewObject: topSongsList];
+            [loader stopAnimating];
+            [loader removeFromSuperview];
         });
     });
     

@@ -14,5 +14,6 @@
 @interface MasterViewController : UITableViewController <UIAlertViewDelegate>
 
 @property (strong, nonatomic) DetailViewController *detailViewController;
+@property (strong, nonatomic) UIActivityIndicatorView *loader;
 
 @end
