@@ -31,6 +31,8 @@
 		3185622117869AC3000B0836 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3185621F17869AC3000B0836 /* InfoPlist.strings */; };
 		3185622317869AC3000B0836 /* listbuilderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3185622217869AC3000B0836 /* listbuilderTests.m */; };
 		3185623417869D88000B0836 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3185623317869D88000B0836 /* MediaPlayer.framework */; };
+		31F2A35C178887080020B813 /* SpotifyInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2A35B178887080020B813 /* SpotifyInterface.m */; };
+		31F2A36017888D7F0020B813 /* SMXMLDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 31F2A35F178887670020B813 /* SMXMLDocument.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -77,6 +79,10 @@
 		3185623117869C91000B0836 /* User.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
 		3185623217869C91000B0836 /* User.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
 		3185623317869D88000B0836 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
+		31F2A35A178887080020B813 /* SpotifyInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpotifyInterface.h; sourceTree = "<group>"; };
+		31F2A35B178887080020B813 /* SpotifyInterface.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SpotifyInterface.m; sourceTree = "<group>"; };
+		31F2A35E178887670020B813 /* SMXMLDocument.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SMXMLDocument.h; sourceTree = "<group>"; };
+		31F2A35F178887670020B813 /* SMXMLDocument.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SMXMLDocument.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -143,6 +149,7 @@
 		318561F717869AC3000B0836 /* listbuilder */ = {
 			isa = PBXGroup;
 			children = (
+				31F2A35D178887490020B813 /* ThirdParty */,
 				3185622C17869AEE000B0836 /* Model */,
 				3185620017869AC3000B0836 /* AppDelegate.h */,
 				3185620117869AC3000B0836 /* AppDelegate.m */,
@@ -200,6 +207,17 @@
 				3185623217869C91000B0836 /* User.m */,
 			);
 			name = Model;
+			sourceTree = "<group>";
+		};
+		31F2A35D178887490020B813 /* ThirdParty */ = {
+			isa = PBXGroup;
+			children = (
+				31F2A35E178887670020B813 /* SMXMLDocument.h */,
+				31F2A35F178887670020B813 /* SMXMLDocument.m */,
+				31F2A35A178887080020B813 /* SpotifyInterface.h */,
+				31F2A35B178887080020B813 /* SpotifyInterface.m */,
+			);
+			name = ThirdParty;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -300,11 +318,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				31F2A36017888D7F0020B813 /* SMXMLDocument.m in Sources */,
 				318434621787475E009AB071 /* Song.m in Sources */,
 				318434631787475F009AB071 /* List.m in Sources */,
 				3184346717875429009AB071 /* ListViewController.m in Sources */,
 				318434641787475F009AB071 /* User.m in Sources */,
 				3185620217869AC3000B0836 /* AppDelegate.m in Sources */,
+				31F2A35C178887080020B813 /* SpotifyInterface.m in Sources */,
 				3185620B17869AC3000B0836 /* MasterViewController.m in Sources */,
 				318561FE17869AC3000B0836 /* main.m in Sources */,
 				3185620E17869AC3000B0836 /* DetailViewController.m in Sources */,
