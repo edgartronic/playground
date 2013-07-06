@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3127D3D41788ADC7005BE833 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 312DD6661787AE9F0050BDAC /* Social.framework */; };
 		312DD6641787A78D0050BDAC /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 312DD6631787A78D0050BDAC /* MessageUI.framework */; };
 		312DD6651787AE8E0050BDAC /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 312DD6631787A78D0050BDAC /* MessageUI.framework */; };
 		312DD6671787AE9F0050BDAC /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 312DD6661787AE9F0050BDAC /* Social.framework */; };
@@ -90,6 +91,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3127D3D41788ADC7005BE833 /* Social.framework in Frameworks */,
 				312DD6641787A78D0050BDAC /* MessageUI.framework in Frameworks */,
 				3185623417869D88000B0836 /* MediaPlayer.framework in Frameworks */,
 				318561F417869AC3000B0836 /* CoreGraphics.framework in Frameworks */,
