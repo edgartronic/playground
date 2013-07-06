@@ -10,6 +10,6 @@
 
 @implementation Song
 
-@synthesize songName, artistName, albumName, dateAddedToList, albumArt;
+@synthesize songName, artistName, albumName, dateAddedToList, albumArt, spotifyURL;
 
 @end

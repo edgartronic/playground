@@ -15,5 +15,6 @@
 @property (nonatomic, strong) NSString *albumName;
 @property (nonatomic, strong) NSDate *dateAddedToList;
 @property (nonatomic, strong) UIImageView *albumArt;
+@property (nonatomic, strong) NSString *spotifyURL;
 
 @end
