@@ -46,7 +46,6 @@
         NSString *firstTrackID = [[firstTrack attributeNamed: @"href"] stringByReplacingOccurrencesOfString:@"spotify:track:" withString:@""];
         spotifyURL = [NSString stringWithFormat: @"%@%@", SPOTIFY_WEB_URL, firstTrackID];
     }
-    NSLog(@"%@", spotifyURL);
     return spotifyURL;
 }
 
