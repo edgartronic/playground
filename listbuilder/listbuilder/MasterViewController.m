@@ -111,7 +111,7 @@
 #pragma Music methods
 
 - (void) addNewList: (id) sender {
-    UIAlertView *a = [[UIAlertView alloc] initWithTitle: @"My Playslists" message: @"Would you like to create a list with your top-rated songs from your iTunes library?" delegate: self cancelButtonTitle: @"Sure!" otherButtonTitles: @"No Thanks.", nil];
+    UIAlertView *a = [[UIAlertView alloc] initWithTitle: @"My Playlists" message: @"Would you like to create a list with your top-rated songs from your iTunes library?" delegate: self cancelButtonTitle: @"Sure!" otherButtonTitles: @"No Thanks.", nil];
     [a show];
 }
 
