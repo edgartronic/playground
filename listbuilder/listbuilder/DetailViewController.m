@@ -9,6 +9,7 @@
 #import "DetailViewController.h"
 #import "Song.h"
 #import "List.h"
+#import "SpotifyInterface.h"
 
 @interface DetailViewController () {
     int selectedSongIndex;
@@ -53,18 +54,23 @@
             s.albumArt.frame = CGRectMake(0, verticalOrigin, s.albumArt.frame.size.width, s.albumArt.frame.size.height);
             [scroll addSubview: s.albumArt];
             NSString *st = [NSString stringWithFormat: @"%@\n%@", s.artistName, s.songName];
+            NSString *spotifyQuery = [st stringByReplacingOccurrencesOfString: @" " withString: @"+"];
+            spotifyQuery = [spotifyQuery stringByReplacingOccurrencesOfString: @"\n" withString: @"+"];
+            s.spotifyURL =  [[SpotifyInterface sharedInterface] getSpotifyURLForQuery: spotifyQuery];
 
             UILabel *lbl = [[UILabel alloc] initWithFrame: CGRectMake(s.albumArt.frame.size.width + 5, verticalOrigin + 15, 150, 50)];
             lbl.numberOfLines = 2;
             lbl.font = [UIFont systemFontOfSize: 13];
             lbl.text = st;
             [scroll addSubview: lbl];
-            UIButton *btn = [UIButton buttonWithType: UIButtonTypeSystem];
-            btn.frame = CGRectMake(lbl.frame.size.width + lbl.frame.origin.x + 5, lbl.frame.origin.y, 65, lbl.frame.size.height);
-            btn.tag = tag;
-            [btn setTitle: @"Share" forState: UIControlStateNormal];
-            [btn addTarget: self action: @selector(shareSong:) forControlEvents: UIControlEventTouchUpInside];
-            [scroll addSubview: btn];
+            if (s.spotifyURL) {
+                UIButton *btn = [UIButton buttonWithType: UIButtonTypeSystem];
+                btn.frame = CGRectMake(lbl.frame.size.width + lbl.frame.origin.x + 5, lbl.frame.origin.y, 65, lbl.frame.size.height);
+                btn.tag = tag;
+                [btn setTitle: @"Share" forState: UIControlStateNormal];
+                [btn addTarget: self action: @selector(shareSong:) forControlEvents: UIControlEventTouchUpInside];
+                [scroll addSubview: btn];
+            }
             verticalOrigin = verticalOrigin + s.albumArt.frame.size.height;
             tag++;
         }
@@ -115,7 +121,7 @@
 
     List *l = (List *) self.detailItem;
     Song *selectedSong = [l.songList objectAtIndex: selectedSongIndex];
-    NSString *textBody = [NSString stringWithFormat: @"Check out this song on Musiome: %@ - %@", selectedSong.artistName, selectedSong.songName];
+    NSString *textBody = [NSString stringWithFormat: @"Check out this song on Musiome: %@ - %@: %@", selectedSong.artistName, selectedSong.songName, selectedSong.spotifyURL];
     
     switch (buttonIndex) {
         case 0:{
