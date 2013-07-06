@@ -170,6 +170,7 @@
             if ([MFMessageComposeViewController canSendText]) {
                 MFMessageComposeViewController *messageController = [[MFMessageComposeViewController alloc] init];
                 messageController.body = textBody;
+                [messageController setMessageComposeDelegate: self];
                 [self presentViewController: messageController animated: YES completion: ^ {
                     NSLog(@"Text presented");
                 }];
@@ -182,6 +183,7 @@
                 MFMailComposeViewController *mailController = [[MFMailComposeViewController alloc] init];
                 [mailController setSubject: textBody];
                 [mailController setMessageBody: textBody isHTML: YES];
+                [mailController setMailComposeDelegate: self];
                 [self presentViewController: mailController animated: YES completion: ^ {
                     NSLog(@"Mail presented");
                 }];
@@ -197,10 +199,44 @@
 - (void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result {
     
     [controller dismissViewControllerAnimated: YES completion: nil];
+    switch (result) {
+        case MessageComposeResultCancelled:
+            NSLog(@"MessageComposeResultCancelled");
+            break;
+            
+        case MessageComposeResultSent:
+            NSLog(@"MessageComposeResultSent");
+            break;
+        
+        case MessageComposeResultFailed:
+            NSLog(@"MessageComposeResultFailed");
+            
+        default:
+            break;
+    }
     
 }
 - (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error {
     
+    switch (result) {
+        case MFMailComposeResultSent:
+            NSLog(@"MFMailComposeResultSent");
+            break;
+            
+        case MFMailComposeResultSaved:
+            NSLog(@"MFMailComposeResultSaved");
+            break;
+            
+        case MFMailComposeResultCancelled:
+            NSLog(@"MFMailComposeResultCancelled");
+            break;
+            
+        case MFMailComposeResultFailed:
+            NSLog(@"MFMailComposeResultFailed. Reason: %@", [error localizedDescription]);
+            
+        default:
+            break;
+    }
     [controller dismissViewControllerAnimated: YES completion: nil];
     
 }
