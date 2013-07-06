@@ -129,29 +129,36 @@
 }
 
 - (void) grabTopRatedSongsFromLib {
-
-    MPMediaQuery *query = [MPMediaQuery songsQuery];
-    NSMutableArray *containerArray = [NSMutableArray array];
     
-    for (MPMediaItem *item in [query items]) {
-        NSString *rating = [item valueForProperty: MPMediaItemPropertyRating];
-        if ([rating integerValue] == 5) {
-            // Create a new 'Song' object for each item
-            Song *newSong = [Song new];
-            newSong.songName = [item valueForProperty: MPMediaItemPropertyTitle];
-            newSong.artistName = [item valueForProperty: MPMediaItemPropertyArtist];
-            MPMediaItemArtwork *art = [item valueForProperty: MPMediaItemPropertyArtwork];
-            UIImage *artImg = [art imageWithSize: CGSizeMake(65.0, 65.0)];
-            newSong.albumArt = [[UIImageView alloc] initWithImage: artImg];
-            [containerArray addObject: newSong];
-        }
-    }
-    // Create a new 'List' object to contain these new songs
-    List *topSongsList = [List new];
-    topSongsList.songList = containerArray;
-    topSongsList.listName = @"My Top-Rated Songs";
-    topSongsList.listDateCreated = [NSDate date];
-    [self insertNewObject: topSongsList];
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0ul);
+    dispatch_async(queue, ^ {
+        
+        MPMediaQuery *query = [MPMediaQuery songsQuery];
+        NSMutableArray *containerArray = [NSMutableArray array];
+    
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            for (MPMediaItem *item in [query items]) {
+                NSString *rating = [item valueForProperty: MPMediaItemPropertyRating];
+                if ([rating integerValue] == 5) {
+                    // Create a new 'Song' object for each item
+                    Song *newSong = [Song new];
+                    newSong.songName = [item valueForProperty: MPMediaItemPropertyTitle];
+                    newSong.artistName = [item valueForProperty: MPMediaItemPropertyArtist];
+                    MPMediaItemArtwork *art = [item valueForProperty: MPMediaItemPropertyArtwork];
+                    UIImage *artImg = [art imageWithSize: CGSizeMake(65.0, 65.0)];
+                    newSong.albumArt = [[UIImageView alloc] initWithImage: artImg];
+                    [containerArray addObject: newSong];
+                }
+            }
+            // Create a new 'List' object to contain these new songs
+            List *topSongsList = [List new];
+            topSongsList.songList = containerArray;
+            topSongsList.listName = @"My Top-Rated Songs";
+            topSongsList.listDateCreated = [NSDate date];
+            [self insertNewObject: topSongsList];
+        });
+    });
+    
 }
 
 - (void) createNewList {
