@@ -189,6 +189,9 @@
         Song *newSong = [Song new];
         newSong.songName = [item valueForProperty: MPMediaItemPropertyTitle];
         newSong.artistName = [item valueForProperty: MPMediaItemPropertyAlbumArtist];
+        if (newSong.artistName == nil) {
+            newSong.artistName = [item valueForProperty: MPMediaItemPropertyArtist];
+        }
         MPMediaItemArtwork *art = [item valueForProperty: MPMediaItemPropertyArtwork];
         UIImage *artImg = [art imageWithSize: CGSizeMake(65.0, 65.0)];
         newSong.albumArt = [[UIImageView alloc] initWithImage: artImg];
