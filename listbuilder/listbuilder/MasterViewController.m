@@ -16,6 +16,7 @@
 }
 - (void) grabTopRatedSongsFromLib;
 - (void) createNewList;
+- (void) addListFromSongList: (NSArray *) array;
 @end
 
 @implementation MasterViewController
@@ -142,28 +143,16 @@
     dispatch_async(queue, ^ {
         
         MPMediaQuery *query = [MPMediaQuery songsQuery];
-        NSMutableArray *containerArray = [NSMutableArray array];
+        NSMutableArray *fiveStarSongsArray = [NSMutableArray array];
         
         dispatch_sync(dispatch_get_main_queue(), ^{
             for (MPMediaItem *item in [query items]) {
                 NSString *rating = [item valueForProperty: MPMediaItemPropertyRating];
                 if ([rating integerValue] == 5) {
-                    // Create a new 'Song' object for each item
-                    Song *newSong = [Song new];
-                    newSong.songName = [item valueForProperty: MPMediaItemPropertyTitle];
-                    newSong.artistName = [item valueForProperty: MPMediaItemPropertyAlbumArtist];
-                    MPMediaItemArtwork *art = [item valueForProperty: MPMediaItemPropertyArtwork];
-                    UIImage *artImg = [art imageWithSize: CGSizeMake(65.0, 65.0)];
-                    newSong.albumArt = [[UIImageView alloc] initWithImage: artImg];
-                    [containerArray addObject: newSong];
+                    [fiveStarSongsArray addObject: item];
                 }
             }
-            // Create a new 'List' object to contain these new songs
-            List *topSongsList = [List new];
-            topSongsList.songList = containerArray;
-            topSongsList.listName = @"My Top-Rated Songs";
-            topSongsList.listDateCreated = [NSDate date];
-            [self insertNewObject: topSongsList];
+            [self addListFromSongList: fiveStarSongsArray];
             [loader stopAnimating];
             [loader removeFromSuperview];
         });
@@ -183,9 +172,16 @@
 - (void)mediaPicker:(MPMediaPickerController *)mediaPicker didPickMediaItems:(MPMediaItemCollection *)mediaItemCollection {
     [mediaPicker dismissViewControllerAnimated: YES completion: nil];
     
-    NSMutableArray *containerArray = [NSMutableArray array];
+    [self addListFromSongList: mediaItemCollection.items];
     
-    for (MPMediaItem *item in mediaItemCollection.items) {
+}
+- (void)mediaPickerDidCancel:(MPMediaPickerController *)mediaPicker {
+    [mediaPicker dismissViewControllerAnimated: YES completion: nil];
+}
+
+- (void) addListFromSongList: (NSArray *) array {
+    NSMutableArray *containerArray = [NSMutableArray array];
+    for (MPMediaItem *item in array) {
         Song *newSong = [Song new];
         newSong.songName = [item valueForProperty: MPMediaItemPropertyTitle];
         newSong.artistName = [item valueForProperty: MPMediaItemPropertyAlbumArtist];
@@ -206,10 +202,6 @@
     newList.listName = titleString;
     newList.listDateCreated = [NSDate date];
     [self insertNewObject: newList];
-    
-}
-- (void)mediaPickerDidCancel:(MPMediaPickerController *)mediaPicker {
-    [mediaPicker dismissViewControllerAnimated: YES completion: nil];
 }
 
 @end
