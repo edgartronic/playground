@@ -11,7 +11,7 @@
 #import <MediaPlayer/MediaPlayer.h>
 #import "List.h"
 
-@interface MasterViewController () {
+@interface MasterViewController () <MPMediaPickerControllerDelegate> {
     NSMutableArray *_objects;
 }
 - (void) grabTopRatedSongsFromLib;
@@ -36,7 +36,7 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
     self.navigationItem.leftBarButtonItem = self.editButtonItem;
-
+    
     UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem: UIBarButtonSystemItemAdd target:self action:@selector(addNewList:)];
     self.navigationItem.rightBarButtonItem = addButton;
     self.detailViewController = (DetailViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
@@ -76,7 +76,7 @@
 
 {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier: @"Cell" forIndexPath: indexPath];
-
+    
     List *_list = _objects[indexPath.row];
     cell.textLabel.text = _list.listName;
     cell.detailTextLabel.text = _list.listDateCreated.description;
@@ -143,7 +143,7 @@
         
         MPMediaQuery *query = [MPMediaQuery songsQuery];
         NSMutableArray *containerArray = [NSMutableArray array];
-    
+        
         dispatch_sync(dispatch_get_main_queue(), ^{
             for (MPMediaItem *item in [query items]) {
                 NSString *rating = [item valueForProperty: MPMediaItemPropertyRating];
@@ -172,7 +172,41 @@
 }
 
 - (void) createNewList {
+    MPMediaPickerController *mediaPicker = [[MPMediaPickerController alloc] initWithMediaTypes: MPMediaTypeAnyAudio];
+    mediaPicker.allowsPickingMultipleItems = YES;
+    mediaPicker.delegate = self;
+    mediaPicker.prompt = @"Add Songs To Your List";
+    [self presentViewController: mediaPicker animated: YES completion: nil];
+}
+
+
+- (void)mediaPicker:(MPMediaPickerController *)mediaPicker didPickMediaItems:(MPMediaItemCollection *)mediaItemCollection {
+    [mediaPicker dismissViewControllerAnimated: YES completion: nil];
     
+    NSMutableArray *containerArray = [NSMutableArray array];
+    
+    for (MPMediaItem *item in mediaItemCollection.items) {
+        Song *newSong = [Song new];
+        newSong.songName = [item valueForProperty: MPMediaItemPropertyTitle];
+        newSong.artistName = [item valueForProperty: MPMediaItemPropertyAlbumArtist];
+        MPMediaItemArtwork *art = [item valueForProperty: MPMediaItemPropertyArtwork];
+        UIImage *artImg = [art imageWithSize: CGSizeMake(65.0, 65.0)];
+        newSong.albumArt = [[UIImageView alloc] initWithImage: artImg];
+        [containerArray addObject: newSong];
+    }
+    List *newList = [List new];
+    newList.songList = containerArray;
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    formatter.dateStyle = NSDateFormatterShortStyle;
+    formatter.timeStyle = NSDateFormatterShortStyle;
+    NSString *titleString = [NSString stringWithFormat: @"New List: %@", [formatter stringFromDate: [NSDate date]]];
+    newList.listName = titleString;
+    newList.listDateCreated = [NSDate date];
+    [self insertNewObject: newList];
+    
+}
+- (void)mediaPickerDidCancel:(MPMediaPickerController *)mediaPicker {
+    [mediaPicker dismissViewControllerAnimated: YES completion: nil];
 }
 
 @end
