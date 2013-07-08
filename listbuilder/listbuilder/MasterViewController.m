@@ -189,8 +189,14 @@
             newSong.artistName = [item valueForProperty: MPMediaItemPropertyArtist];
         }
         MPMediaItemArtwork *art = [item valueForProperty: MPMediaItemPropertyArtwork];
+        UIImageView *img;
         UIImage *artImg = [art imageWithSize: CGSizeMake(65.0, 65.0)];
-        newSong.albumArt = [[UIImageView alloc] initWithImage: artImg];
+        if (artImg == nil) {
+            img = [[UIImageView alloc] initWithImage: [self imageWithColor: [UIColor darkGrayColor]]];
+        } else {
+            img = [[UIImageView alloc] initWithImage: artImg];
+        }
+        newSong.albumArt = img;
         [containerArray addObject: newSong];
     }
     List *newList = [List new];
@@ -202,6 +208,20 @@
     newList.listName = titleString;
     newList.listDateCreated = [NSDate date];
     [self insertNewObject: newList];
+}
+
+- (UIImage *)imageWithColor:(UIColor *)color {
+    CGRect rect = CGRectMake(0.0, 0.0, 90.0, 90.0);
+    UIGraphicsBeginImageContext(rect.size);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    
+    CGContextSetFillColorWithColor(context, [color CGColor]);
+    CGContextFillRect(context, rect);
+    
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return image;
 }
 
 @end
