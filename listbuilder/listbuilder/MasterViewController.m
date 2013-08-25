@@ -13,8 +13,11 @@
 
 @interface MasterViewController () <MPMediaPickerControllerDelegate> {
     NSMutableArray *_objects;
+    UIAlertView *listAlert;
+    UIAlertView *loginAlert;
 }
 - (void) grabTopRatedSongsFromLib;
+- (void) grabPlaylistsFromLib;
 - (void) createNewList;
 - (void) addListFromSongList: (NSArray *) array;
 @end
@@ -42,6 +45,10 @@
     self.navigationItem.rightBarButtonItem = addButton;
     self.detailViewController = (DetailViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
     
+    NSString *user = [[NSUserDefaults standardUserDefaults] objectForKey: @"storedUserName"];
+    if (!user) {
+        [self showLoginAlert];
+    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -112,22 +119,33 @@
 #pragma Music methods
 
 - (void) addNewList: (id) sender {
-    UIAlertView *a = [[UIAlertView alloc] initWithTitle: @"My Playlists" message: @"Would you like to create a list with your top-rated songs from your iTunes library?" delegate: self cancelButtonTitle: @"Sure!" otherButtonTitles: @"No Thanks.", nil];
-    [a show];
+    listAlert = [[UIAlertView alloc] initWithTitle: @"My Playlists" message: @"Would you like to create a list with your top-rated songs from your iTunes library?" delegate: self cancelButtonTitle: @"Sure!" otherButtonTitles: @"No Thanks.", nil];
+    [listAlert show];
 }
 
 - (void) alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
-    switch (buttonIndex) {
-        case 0:
-            [self grabTopRatedSongsFromLib];
-            break;
-            
-        case 1:
-            [self createNewList];
-            break;
-            
-        default:
-            break;
+    if (alertView == listAlert) {
+        switch (buttonIndex) {
+            case 0:
+                [self grabPlaylistsFromLib];
+                break;
+                
+            case 1:
+                [self grabPlaylistsFromLib];
+                break;
+                
+            default:
+                break;
+        }
+    }
+    if (alertView == loginAlert) {
+        if (![loginAlert textFieldAtIndex: 0].text || ![loginAlert textFieldAtIndex: 1].text) {
+            [self showLoginAlert];
+        } else {
+            NSLog(@"user: %@ - pass: %@", [loginAlert textFieldAtIndex: 0].text, [loginAlert textFieldAtIndex: 1].text);
+            [[MusiomeAPIServer sharedAPI] setApiDelegate: self];
+            [[MusiomeAPIServer sharedAPI] doLoginWithUsername: [loginAlert textFieldAtIndex: 0].text andPassword: [loginAlert textFieldAtIndex: 1].text];
+        }
     }
 }
 
@@ -153,6 +171,48 @@
                 }
             }
             [self addListFromSongList: fiveStarSongsArray];
+            [loader stopAnimating];
+            [loader removeFromSuperview];
+        });
+    });
+    
+}
+
+- (void) grabPlaylistsFromLib {
+    
+    loader = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle: UIActivityIndicatorViewStyleGray];
+    loader.frame = CGRectMake(0, 0, 150, 150);
+    loader.center = self.view.center;
+    [self.view addSubview: loader];
+    [loader startAnimating];
+    
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0ul);
+    dispatch_async(queue, ^ {
+        
+        MPMediaQuery *query = [MPMediaQuery playlistsQuery];
+        for (MPMediaPlaylist *playList in [query collections]) {
+            
+            NSMutableString *jsonPost = [NSMutableString string];
+            [jsonPost appendString: @"{"];
+            
+            NSString *playlistName = [NSString stringWithFormat: @"\"listName\": \"%@\",\n", [playList valueForKey: MPMediaPlaylistPropertyName]];
+            [jsonPost appendString: playlistName];
+            [jsonPost appendString: @"\"listType\": \"Track\",\n"];
+            [jsonPost appendString: @"\"listEntries\": [\n"];
+            for (MPMediaItem *item in playList.items) {
+                
+                NSString *artistName = [item valueForKey: MPMediaItemPropertyArtist];
+                NSString *songName = [item valueForKey: MPMediaItemPropertyTitle];
+                NSString *songAlbumName = [item valueForKey: MPMediaItemPropertyAlbumTitle];
+                NSString *listEntry = [NSString stringWithFormat: @"{\"artist\": \"%@\", \"song\": \"%@\", \"album\": \"%@\"},\n", artistName, songName, songAlbumName];
+                [jsonPost appendString: listEntry];
+                
+            }
+            [jsonPost appendString: @"]\n}"];
+            NSLog(@"json post: %@", jsonPost);
+            
+        }
+        dispatch_sync(dispatch_get_main_queue(), ^{
             [loader stopAnimating];
             [loader removeFromSuperview];
         });
@@ -222,6 +282,20 @@
     UIGraphicsEndImageContext();
     
     return image;
+}
+
+- (void) showLoginAlert {
+    loginAlert = [[UIAlertView alloc] initWithTitle: @"Login" message: @"Please enter your username & password below." delegate: self cancelButtonTitle: @"Cancel" otherButtonTitles: @"Login", nil];
+    loginAlert.alertViewStyle = UIAlertViewStyleLoginAndPasswordInput;
+    [loginAlert show];
+}
+
+- (void) loginSuccessful {
+    NSLog(@"login successful.");
+}
+
+- (void) loginFailed {
+    NSLog(@"login failed.");
 }
 
 @end

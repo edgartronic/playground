@@ -8,10 +8,11 @@
 
 #import <UIKit/UIKit.h>
 #import "Song.h"
+#import "MusiomeAPIServer.h"
 
 @class DetailViewController;
 
-@interface MasterViewController : UITableViewController <UIAlertViewDelegate>
+@interface MasterViewController : UITableViewController <UIAlertViewDelegate, MusiomeAPIServerDelegate>
 
 @property (strong, nonatomic) DetailViewController *detailViewController;
 @property (strong, nonatomic) UIActivityIndicatorView *loader;
