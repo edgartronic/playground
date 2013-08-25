@@ -48,6 +48,9 @@
     NSString *user = [[NSUserDefaults standardUserDefaults] objectForKey: @"storedUserName"];
     if (!user) {
         [self showLoginAlert];
+    } else {
+        NSString *pass = [[NSUserDefaults standardUserDefaults] objectForKey: @"storedUserPassword"];
+        [[MusiomeAPIServer sharedAPI] doLoginWithUsername: user andPassword: pass];
     }
 }
 
@@ -198,18 +201,28 @@
             NSString *playlistName = [NSString stringWithFormat: @"\"listName\": \"%@\",\n", [playList valueForKey: MPMediaPlaylistPropertyName]];
             [jsonPost appendString: playlistName];
             [jsonPost appendString: @"\"listType\": \"Track\",\n"];
+
+            NSLog(@"%@", jsonPost);
             [jsonPost appendString: @"\"listEntries\": [\n"];
             for (MPMediaItem *item in playList.items) {
                 
                 NSString *artistName = [item valueForKey: MPMediaItemPropertyArtist];
                 NSString *songName = [item valueForKey: MPMediaItemPropertyTitle];
                 NSString *songAlbumName = [item valueForKey: MPMediaItemPropertyAlbumTitle];
-                NSString *listEntry = [NSString stringWithFormat: @"{\"artist\": \"%@\", \"song\": \"%@\", \"album\": \"%@\"},\n", artistName, songName, songAlbumName];
+                NSString *listEntry;
+
+                if (item == playList.items.lastObject) {
+                    listEntry = [NSString stringWithFormat: @"{\"artist\": \"%@\", \"song\": \"%@\", \"album\": \"%@\"}\n", artistName, songName, songAlbumName];
+                } else {
+                    listEntry = [NSString stringWithFormat: @"{\"artist\": \"%@\", \"song\": \"%@\", \"album\": \"%@\"},\n", artistName, songName, songAlbumName];
+                }
+                
                 [jsonPost appendString: listEntry];
                 
             }
             [jsonPost appendString: @"]\n}"];
             NSLog(@"json post: %@", jsonPost);
+            [[MusiomeAPIServer sharedAPI] createListWithJSONPost: jsonPost];
             
         }
         dispatch_sync(dispatch_get_main_queue(), ^{
@@ -296,6 +309,14 @@
 
 - (void) loginFailed {
     NSLog(@"login failed.");
+}
+
+- (void) listCreationSuccessful {
+    NSLog(@"list creation successful!");
+}
+
+- (void) listCreationFailed {
+    NSLog(@"list creation failed.");
 }
 
 @end
