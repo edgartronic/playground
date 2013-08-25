@@ -18,6 +18,7 @@
 
 - (void) createAccountWithUsername: (NSString *) userName andEmail: (NSString *) email;
 - (void) doLoginWithUsername: (NSString *) userName andPassword: (NSString *) password;
+- (void) createListWithJSONPost: (NSString *) jsonPost;
 
 @end
 
@@ -27,4 +28,6 @@
 - (void) accountCreationFailed;
 - (void) loginSuccessful;
 - (void) loginFailed;
+- (void) listCreationSuccessful;
+- (void) listCreationFailed;
 @end

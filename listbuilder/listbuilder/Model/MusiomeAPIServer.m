@@ -107,6 +107,39 @@
     
 }
 
+- (void) createListWithJSONPost: (NSString *) jsonPost  {
+    
+    NSString *loginString = [NSString stringWithFormat: @"%@%@", API_ROOT_URL, API_ENDPOINT_LIST_CREATE];
+    NSURL *url = [NSURL URLWithString: loginString];
+    
+    NSMutableURLRequest *req = [NSMutableURLRequest requestWithURL: url];
+    [req setHTTPMethod: @"POST"];
+    [req setValue: @"application/json" forHTTPHeaderField: @"content-type"];
+    [req setHTTPBody: [jsonPost dataUsingEncoding: NSUTF8StringEncoding]];
+    
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0ul);
+    dispatch_async(queue, ^ {
+        
+        NSData *resultData = [NSURLConnection sendSynchronousRequest: req returningResponse: nil error: nil];
+        
+        _resultDict = [NSJSONSerialization JSONObjectWithData: resultData options: NSJSONReadingAllowFragments error: nil];
+        NSLog(@"result: %@", _resultDict);
+        _isAccountCreationSuccessful = [[_resultDict objectForKey: @"success"] boolValue];
+        
+        BOOL isPostSuccessful = [[_resultDict objectForKey: @"success"] boolValue];
+        
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            
+            if (isPostSuccessful) {
+                [_apiDelegate listCreationSuccessful];
+            } else {
+                [_apiDelegate listCreationFailed];
+            }
+        });
+    });
+    
+}
+
 
 
 
