@@ -10,6 +10,7 @@
 
 @interface List : NSObject
 
+@property (nonatomic, strong) NSString *listId;
 @property (nonatomic, strong) NSString *listName;
 @property (nonatomic, strong) NSDate *listDateCreated;
 @property (nonatomic, strong) NSMutableArray *songList;

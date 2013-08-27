@@ -10,7 +10,7 @@
 
 @implementation List
 
-@synthesize listName, listDateCreated, songList;
+@synthesize listName, listDateCreated, songList, listId;
 
 - (id) init {
     if (self == [super init]) {
